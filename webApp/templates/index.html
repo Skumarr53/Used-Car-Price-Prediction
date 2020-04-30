@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Used cars price Prediction</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        <style>
+        .slidecontainer {
+            width: 90%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 1;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: steelblue;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        select {
+            width: 250px
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <table style="background-color: black;"  align="center">
+                <tr> <!--first row of table-->
+                    <td> <!--cells or section in side row-->
+                        <img src="static/images/sales_logo.jpeg" alt="No Image" style='padding:1px; border:0px solid #021a40; width: 300px; height: 200px'>
+                    </td>
+
+                    <td width="600px"> 
+                        <h1 style="text-align: center;"><font color="white" style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; letter-spacing: 0.01em; font-size: 50px;">Used Car Price Prediction</font></h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table cellpadding='10' align="center">
+            <tr>
+                <td colspan="3" ><H3 align="center">Customize your car parameters and get real-time price predictions!</H3></td>
+            </tr>
+
+            <tr>
+                <td width="300px">
+                    <div class="dropdownlist">
+                        <label for="brand">Choose a Brand: <span><select id="brand"></select></span></label>                        
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="Model">Choose a Model: <span><select id="Model"></select></span></label>                        
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="Location">Choose a Location: <span><select id="Location"></select></span></label>
+                    </div>
+
+                    <div class="slidecontainer">
+                        <label> Year: <span id="Year"></span></label>
+                        <input type="range" min="1998" max="2019" value="2014" class="slider" id="year_range" step="1">
+                    </div>
+
+                    <div class="slidecontainer">
+                        <label> Kilometers Driven: <span id="km_drive"></span> km</label>
+                        <input type="range" min="171" max="6500000" value="58738" class="slider" id="km_drive_range" step="1000">
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="Fuel_type">Fuel type: <span><select id="Fuel_type"></select></span></label>                        
+                    </div>
+                </td>
+
+                <td width="300px"> 
+                    <label>Price: <span id="estimated_price"></span> Lakhs</label>
+                     <p style="text-align:center">
+                        <img src="static/images/used_cars.webp" alt="wine quality score" id="img_quality" style='padding:1px; border:1px solid #021a40; width: 100%; height: 100%'>
+                     </p>
+                </td>
+
+                <td width="300px">
+
+                    <div class="dropdownlist">
+                        <label for="Transmission">Transmission: <span><select id="Transmission"></select></span></label>
+                    </div>
+                    
+                    <div class="dropdownlist">
+                        <label for="Owner_Type">Owner type: <span><select id="Owner_type"></select></span></label>
+                    </div>
+
+                    <div class="slidecontainer">
+                        <label> Mileage: <span id="Mileage"></span> kmpl</label>
+                        <input type="range" min="0" max="34" value="18" class="slider" id="Mileage_range" step="2">
+                    </div>
+
+                    <div class="slidecontainer">
+                        <label> Engine: <span id="Engine"></span> cc</label>
+                        <input type="range" min="70" max="6000" value="1620" class="slider" id="Engine_range" step="10">
+                    </div>
+
+                    <div class="slidecontainer">
+                        <label> Power: <span id="Power"></span> bhp</label>
+                        <input type="range" min="30" max="560" value="112" class="slider" id="Power_range" step="10">
+                    </div>
+
+                    <div class="slidecontainer">
+                        <label> Seats: <span id="Seats"></span></label>
+                        <input type="range" min="0" max="10" value="5" class="slider" id="Seats_range" step="1">
+                    </div>
+
+
+
+                </td>
+            </tr>
+
+
+        </table>
+    </body>
+
+    <script>
+        // schema for adding dict to dropdown values
+        var brands = {{ le_brands_Encdict|safe }}
+        for (let key in brands) {
+            i=0;
+            let value = brands[key];
+            //alert( value);
+            $('#brand').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+
+
+        // workaround for fetching models for selected brand
+        var brand2models = {{ model2brand|safe }} //dict of models 2 brand mapping 
+        var models = {{ le_models_Encdict|safe }} //dict of models and encoded labels
+        var models_list = brand2models[$('#brand option:selected').text()]
+        $(models_list).each(function(i){
+            key = models_list[i];
+            var value = models[key];
+            $('#Model').append('<option value=' + value + '>' + key + '</option>');
+            })
+        $("#brand").on("change",function(i){
+            $("#Model").empty()
+            var models_list = brand2models[$('#brand option:selected').text()]
+            $(models_list).each(function(i){
+                key = models_list[i];
+                var value = models[key];
+                $('#Model').append('<option value=' + value + '>' + key + '</option>');
+                })
+        })
+        
+        var locations = {{ le_locations_Encdict|safe }}
+        for (let key in locations) {
+            i=0;
+            let value = locations[key];
+            //alert( value);
+            $('#Location').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var slider3 = $("#year_range");
+        $("#Year").html(slider3.val());
+        slider3.change(function() {
+            $("#Year").html(slider3.val());
+        })
+
+        var slider4 = $("#km_drive_range");
+        $("#km_drive").html(slider4.val());
+        slider4.change(function() {
+            $("#km_drive").html(slider4.val());
+        })
+
+        var fuel_types = {{ le_fuel_types_Encdict|safe }}
+        for (let key in fuel_types) {
+            i=0;
+            let value = fuel_types[key];
+            //alert( value);
+            $('#Fuel_type').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var transmissions = {{ le_transmissions_Encdict|safe }}
+        for (let key in transmissions) {
+            i=0;
+            let value = transmissions[key];
+            //alert( value);
+            $('#Transmission').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var owner_types = {{ le_owner_types_Encdict|safe }}
+        for (let key in owner_types) {
+            i=0;
+            let value = owner_types[key];
+            //alert( value);
+            $('#Owner_type').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+
+
+        var slider9 = $("#Mileage_range");
+        $("#Mileage").html(slider9.val());
+        slider9.change(function() {
+            $("#Mileage").html(slider9.val());
+        })
+
+        var slider10 = $("#Engine_range");
+        $("#Engine").html(slider10.val());
+        slider10.change(function() {
+            $("#Engine").html(slider10.val());
+        })
+
+        var slider11 = $("#Power_range");
+        $("#Power").html(slider11.val());
+        slider11.change(function() {
+            $("#Power").html(slider11.val());
+        })
+
+        var slider12 = $("#Seats_range");
+        $("#Seats").html(slider12.val());
+        slider12.change(function() {
+            $("#Seats").html(slider12.val());
+        })
+
+        var logger = '';
+
+        // functions for udating predictions
+        function update_dashboard(price_prediction){
+            $('#estimated_price').html(price_prediction);
+            }
+
+        function fetchdata()
+        {
+        // dictionary that stores user inputs
+            $.getJSON({
+                type: "GET",
+                url: '{{ url_for('background_process') }}',
+                data: {
+                    'Brand': $('#brand option:selected').html(),
+                    'Model': $('#Model option:selected').html(),
+                    'Location': $("#Location option:selected").html(),
+                    'Year': $("#Year").html(),
+                    'Kilometers_Driven': $("#km_drive").html(),
+                    'Fuel_Type': $("#Fuel_type option:selected").html(),
+                    'Transmission': $("#Transmission option:selected").html(),
+                    'Owner_Type': $("#Owner_type option:selected").html(),
+                    'Mileage': $("#Mileage").html(),
+                    'Engine': $("#Engine").html(),
+                    'Power': $("#Power").html(),
+                    'Seats': $("#Seats").html(),
+                },
+                success: function(data){
+                    logger = data.price_prediction
+                    update_dashboard(data.price_prediction);
+                }
+            });
+        }
+
+        // add event listener to capture changes to wine parameters  
+        $(document).mouseup(function () {fetchdata()});
+        $(document).on('change', function () {fetchdata()});
+
+
+
+    </script>
+    </html>
+
+
+
+<!-- Reference for creating dropdown
+
+            <form action="/action_page.php">
+            <label for="cars">Choose a car:</label>
+            <select id="cars" name="cars" size="1">
+              <option value="volvo">Volvo</option>
+              <option value="saab">Saab</option>
+              <option value="fiat">Fiat</option>
+              <option value="audi">Audi</option>
+            </select><br><br>
+            <input type="submit">
+-->
