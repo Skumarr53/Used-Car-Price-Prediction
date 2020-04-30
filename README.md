@@ -1,6 +1,7 @@
 # predicting-the-costs-of-used-cars
 
 ![](Snapshots/working_app.gif)
+*working App developed using Flask*
 
  Dataset used here is from a hackathon hosted by MachineHack. Dataset contains around 6000 cars examples and has features like Location, Manufacture details, car features such as Fuel type, Engine, and usage parameters. sample is shown here. Some features are numeric attached with units and they need to be removed
 
