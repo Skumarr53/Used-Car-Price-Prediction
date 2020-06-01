@@ -11,8 +11,29 @@
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
         <style>
+
+        
+
+        h3, .h3 {
+            font-size: x-large;
+            font-family: monospace;
+            color: blue;
+            font-weight: bold;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 0px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        span {
+            margin-bottom: 10px;
+        }
+
         .slidecontainer {
             width: 90%;
+            margin-bottom: 0px;
         }
 
         .slider {
@@ -50,7 +71,8 @@
         }
 
         select {
-            width: 250px
+            width: 250px;
+            font-family: cursive;
         }
         </style>
     </head>
@@ -267,7 +289,7 @@
         // dictionary that stores user inputs
             $.getJSON({
                 type: "GET",
-                url: '{{ url_for('background_process') }}',
+                url: '{{ url_for('background_process')}}',
                 data: {
                     'Brand': $('#brand option:selected').html(),
                     'Model': $('#Model option:selected').html(),

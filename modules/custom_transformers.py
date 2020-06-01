@@ -562,8 +562,12 @@ class DF_OneHotEncoder(BaseEstimator, TransformerMixin):
             one_hot = pd.get_dummies(X[col],prefix=col)
             X = X.drop(col,axis = 1)
             X = X.join(one_hot)
-
-        if self.filter_threshold is not None: X = X[self.onehot_cols]
+        X.reset_index(inplace = True,drop= True)
+        if self.filter_threshold is not None:
+            Dummy = pd.DataFrame(np.zeros((len(X),len(self.onehot_cols))), columns=self.onehot_cols)
+            com_cols = Dummy.columns.intersection(X.columns)
+            Dummy[com_cols] = X[com_cols]
+            X = Dummy
         return X
 
 #class DF_LabelEncoder(BaseEstimator, TransformerMixin):

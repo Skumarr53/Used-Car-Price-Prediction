@@ -5,18 +5,51 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import DBSCAN
 from functools import reduce
+from statsmodels.stats.outliers_influence import variance_inflation_factor    
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import SelectKBest, mutual_info_regression, RFE, RFECV
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import TransformerMixin, BaseEstimator
-from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import PolynomialFeatures, LabelEncoder
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.preprocessing import FunctionTransformer, StandardScaler, RobustScaler, MultiLabelBinarizer
+from sklearn.preprocessing import FunctionTransformer, MinMaxScaler, StandardScaler, RobustScaler, MultiLabelBinarizer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import r2_score, accuracy_score
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from collections import defaultdict
+from sklearn.decomposition import PCA
+from pdb import set_trace
+        
 
+class DF_RemoveMulticolinear(BaseEstimator, TransformerMixin):
+    # FunctionTransformer but for pandas DataFrames
+
+    def __init__(self, thresh = 5):
+        self.thresh = thresh
+
+    def fit(self, X, y=None):
+        # stateless transformer
+        cols = X.columns
+        variables = np.arange(X.shape[1])
+        dropped=True
+        while dropped:
+            dropped=False
+            c = X[cols[variables]].values
+            vif = [variance_inflation_factor(c, ix) for ix in np.arange(c.shape[1])]
+
+            maxloc = vif.index(max(vif))
+            if max(vif) > self.thresh:
+                print('dropping \'' + X[cols[variables]].columns[maxloc] + '\' at index: ' + str(maxloc))
+                variables = np.delete(variables, maxloc)
+                dropped=True
+
+        print('Remaining variables:')
+        print(X.columns[variables])
+        self.cols = X.columns[variables]
+        return self
+
+    def transform(self, X):
+        return X[self.cols]
 
 class DFFunctionTransformer(BaseEstimator, TransformerMixin):
     # FunctionTransformer but for pandas DataFrames
@@ -86,6 +119,25 @@ class DFStandardScaler(BaseEstimator, TransformerMixin):
         self.ss.fit(X)
         self.mean_ = pd.Series(self.ss.mean_, index=X.columns)
         self.scale_ = pd.Series(self.ss.scale_, index=X.columns)
+        return self
+
+    def transform(self, X):
+        # assumes X is a DataFrame
+        Xss = self.ss.transform(X)
+        Xscaled = pd.DataFrame(Xss, index=X.index, columns=X.columns)
+        return Xscaled
+
+class DFMinMaxScaler(BaseEstimator, TransformerMixin):
+        # StandardScaler but for pandas DataFrames
+
+    def __init__(self):
+        self.ss = None
+        self.mean_ = None
+        self.scale_ = None
+
+    def fit(self, X, y=None):
+        self.ss = MinMaxScaler()
+        self.ss.fit(X)
         return self
 
     def transform(self, X):
@@ -419,12 +471,19 @@ class DF_Model(BaseEstimator, TransformerMixin):
         self.estimator = estimator
 
     def fit(self,X,y=None):
+        self.cols = list(X.columns)
         self.estimator.fit(X,y)
         return self
 
     def predict(self,X):
         preds = self.estimator.predict(X)
         return preds
+    
+    def get_feature_names(self):
+        return self.cols
+
+    def predict_proba(self,X):
+        return self.estimator.predict_proba(X)[:,-1]
 
 class DF_PolynomialFeatures(BaseEstimator, TransformerMixin):
     
@@ -442,4 +501,73 @@ class DF_PolynomialFeatures(BaseEstimator, TransformerMixin):
         X_poly = self.poly.transform(X)
         return pd.DataFrame(X_poly,index=X.index,columns=self.poly.get_feature_names(X.columns))
 
+class DF_Tarnsform(BaseEstimator, TransformerMixin):
 
+    def __init__(self,func = None):
+        self.func = func
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X_transfromed = X.apply(self.func)
+        return X_transfromed
+
+class DF_PCAtransform(BaseEstimator, TransformerMixin):
+
+    def __init__(self,n_components = 3):
+        self.n_components = n_components
+    
+    def fit(self, X, y=None):
+        self.pca = PCA(n_components=self.n_components)
+        self.pca.fit(X)
+        return self
+
+    def transform(self, X):
+        return self.pca.fit_transform(X)
+
+class DF_SmoteOverSampler(BaseEstimator, TransformerMixin):
+    def __init__(self, ratio = 1):
+        self.ratio = ratio
+    
+    def fit(self, X, y=None):
+        self.smote = SMOTE(sampling_strategy = self.ratio, n_jobs=-1).fit(X, y)
+
+    def fit_transform(self, X, y=None):
+        self.fit(X, y) 
+        X,y = self.smote.fit_sample(X, y)
+        return X, y.values.reshape(-1, 1)
+
+    def transform(self, X):
+        return X
+
+class DF_OneHotEncoder(BaseEstimator, TransformerMixin):
+    
+    def __init__(self, filter_threshold = None):
+        self.filter_threshold = filter_threshold
+
+    def fit(self, X, y=None):
+        self.onehot_cols = []
+        for col in X.columns:
+            if self.filter_threshold is not None:
+                cat_inds = X[col].value_counts(normalize=True)>self.filter_threshold
+                cat_cols = cat_inds.index[cat_inds].tolist()
+                cat_cols = [f'{col}_{s}' for s in cat_cols]
+                if len(cat_inds) == len(cat_cols): cat_cols = cat_cols[:-1]
+                self.onehot_cols.extend(cat_cols)
+        return self
+
+    def transform(self, X):
+        for col in X.columns:
+            one_hot = pd.get_dummies(X[col],prefix=col)
+            X = X.drop(col,axis = 1)
+            X = X.join(one_hot)
+        X.reset_index(inplace = True,drop= True)
+        if self.filter_threshold is not None:
+            Dummy = pd.DataFrame(np.zeros((len(X),len(self.onehot_cols))), columns=self.onehot_cols)
+            com_cols = Dummy.columns.intersection(X.columns)
+            Dummy[com_cols] = X[com_cols]
+            X = Dummy.astype(float)
+        return X
+
+#class DF_LabelEncoder(BaseEstimator, TransformerMixin):
