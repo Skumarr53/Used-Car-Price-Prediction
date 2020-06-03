@@ -558,6 +558,7 @@ class DF_OneHotEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        index = X.index
         for col in X.columns:
             one_hot = pd.get_dummies(X[col],prefix=col)
             X = X.drop(col,axis = 1)
@@ -567,7 +568,7 @@ class DF_OneHotEncoder(BaseEstimator, TransformerMixin):
             Dummy = pd.DataFrame(np.zeros((len(X),len(self.onehot_cols))), columns=self.onehot_cols)
             com_cols = Dummy.columns.intersection(X.columns)
             Dummy[com_cols] = X[com_cols]
-            X = Dummy
+            X = Dummy.set_index(index)
         return X
 
 #class DF_LabelEncoder(BaseEstimator, TransformerMixin):

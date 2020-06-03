@@ -97,4 +97,4 @@ def background_process():
 # when running app locally
 if __name__ == '__main__':
     application.debug = False
-    application.run()
+    application.run(host='0.0.0.0')
