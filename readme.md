@@ -66,6 +66,8 @@ pipe_params= {
 ![](Snapshots/Best_model_validRes.png)
 
 
+Gradient boosting algo with lowest loss 0.033 is selected as final.
+
 ### Export whole Model Pipeline
 
 ``` python
