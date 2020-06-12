@@ -1,5 +1,4 @@
-ARG VARIANT="3.7"
-FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
+FROM python:3.7.5-slim
 
 ENV APP /app
 RUN mkdir $APP

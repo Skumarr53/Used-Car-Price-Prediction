@@ -1,5 +1,7 @@
 # predicting-the-costs-of-used-cars
 
+AWS link: http://usedcarpricepredict-env.eba-jdefnbzx.us-east-1.elasticbeanstalk.com/
+
 ![](Snapshots/working_app.gif)
 
 <center><i>working App developed using Flask</i></center><br>
