@@ -67,8 +67,11 @@ pipe_params= {
 
 ![](Snapshots/Best_model_validRes.png)
 
-
 Gradient boosting algo with lowest loss 0.033 is selected as final.
+
+### Feature importances
+
+![](Snapshots/feature_importances.png)
 
 ### Export whole Model Pipeline
 

@@ -78,10 +78,14 @@ class DFFeatureUnion(BaseEstimator, TransformerMixin):
             t.fit(X, y)
         return self
 
+    def get_feature_names(self):
+        return self.columns
+
     def transform(self, X):
         # assumes X is a DataFrame
         Xts = [t.transform(X) for _, t in self.transformer_list]
         Xunion = reduce(lambda X1, X2: pd.merge(X1, X2, left_index=True, right_index=True), Xts)
+        self.columns = Xunion.columns.tolist()
         return Xunion
 
 
