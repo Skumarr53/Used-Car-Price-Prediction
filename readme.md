@@ -1,6 +1,17 @@
 # predicting-the-costs-of-used-cars
 
-[[TOC]]
+- [predicting-the-costs-of-used-cars](#predicting-the-costs-of-used-cars)
+  - [Demo](#demo)
+  - [Overview](#overview)
+    - [Dataset used](#dataset-used)
+  - [Feature Tansformation](#feature-tansformation)
+  - [Best Model selection](#best-model-selection)
+    - [Metric](#metric)
+    - [Model Pipeline](#model-pipeline)
+    - [Best parametes](#best-parametes)
+    - [Validiton results:](#validiton-results)
+    - [Feature importances](#feature-importances)
+  - [Technologies Used](#technologies-used)
 
 ## Demo
 
@@ -17,10 +28,16 @@ Cars are more than just a utility for many. We all have different tastes when it
 
 Dataset used here is from a hackathon hosted by [MachineHack](https://www.machinehack.com/). Go to the hackathon [homepage]((https://www.machinehack.com/hackathons/5e8327d352c028cd80a0bd99)) to know more about the dataset. The dataset set contains features like Location, Manufacture details, car features such as Fuel type, Engine, and usage parameters. Below is the app in Working condition.
 
+## Feature Tansformation
+
+- Name feature is spilt into Model and Brand.
+- 
+
 
 ## Best Model selection
 
 ### Metric 
+
 * **Root Mean Squared Logarithmic Error** (RMSLE) is used as metric.
 
 * RMSLE is usually used when you don't want to penalize huge differences in the predicted and the actual values when both predicted and true values are huge numbers. Rather we have to focus on percent error relative to the actual values.
