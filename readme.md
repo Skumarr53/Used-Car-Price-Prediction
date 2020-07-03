@@ -14,6 +14,7 @@
     - [Feature importances](#feature-importances)
   - [Falsk App Deployment](#falsk-app-deployment)
   - [Technologies Used](#technologies-used)
+  - [Creator:](#creator)
 
 ## Demo
 
@@ -131,8 +132,8 @@ All the files reqiured for setting up Flask deployment are in ```webapp``` folde
 ```sh
 conda create -n CarPricePredict python=3.7 # create environment under 'CarPricePredict' name
 conda activate CarPricePredict # activate environment
+cd webapp/ # change directory to App deploymnet setup folder
 pip3 install -r requirements.txt # install dependencies
-cd webapp/ # change directory to App deploymnet setup folder 
 python3 application.py # launch application
 ```
 
@@ -147,3 +148,11 @@ python3 application.py # launch application
 [<img target="_blank" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/120px-HTML5_logo_and_wordmark.svg.png" width=100>]()
 [<img target="_blank" src="https://openjsf.org/wp-content/uploads/sites/84/2019/10/jquery-logo-vertical_large_square.png" width=100>](https://jquery.com/)
 [<img target="_blank" src="https://www.docker.com/sites/default/files/d8/styles/role_icon/public/2019-07/vertical-logo-monochromatic.png?itok=erja9lKc" width=100>](https://www.docker.com/)
+
+
+
+--------------------------------------------
+
+## Creator:
+
+[<img target="_blank" src="https://media-exp1.licdn.com/dms/image/C4D03AQG-6F3HHlCTVw/profile-displayphoto-shrink_200_200/0?e=1599091200&v=beta&t=WcZLox9lzVQqIDJ2-5DsEhNFvEE1zrZcvkmcepJ9QH8" width=150>](https://skumar-djangoblog.herokuapp.com/)
