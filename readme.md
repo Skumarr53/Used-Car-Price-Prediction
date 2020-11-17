@@ -1,19 +1,20 @@
 # Price prediction of used cars
 
-- [Demo](#demo)
-- [Overview](#overview)
-  - [Dataset Descrption](#dataset-descrption)
-- [key technical aspects](#key-technical-aspects)
-- [Best Model selection](#best-model-selection)
-  - [Metric](#metric)
-  - [Model Pipeline](#model-pipeline)
-  - [Parameter search space](#parameter-search-space)
-  - [Best parametes](#best-parametes)
-  - [Validiton results:](#validiton-results)
-  - [Feature importances](#feature-importances)
-- [Falsk App Deployment](#falsk-app-deployment)
-- [Technologies Used](#technologies-used)
-- [Creator:](#creator)
+- [Price prediction of used cars](#price-prediction-of-used-cars)
+  - [Demo](#demo)
+  - [Overview](#overview)
+    - [Dataset Descrption](#dataset-descrption)
+  - [key technical aspects](#key-technical-aspects)
+  - [Best Model selection](#best-model-selection)
+    - [Metric](#metric)
+    - [Model Pipeline](#model-pipeline)
+    - [Parameter search space](#parameter-search-space)
+    - [Best parametes](#best-parametes)
+    - [Validiton results:](#validiton-results)
+    - [Feature importances](#feature-importances)
+  - [Falsk App Deployment](#falsk-app-deployment)
+  - [Technologies Used](#technologies-used)
+  - [Creator:](#creator)
 
 ## Demo
 
@@ -131,7 +132,7 @@ All the files reqiured for setting up Flask deployment are in ```webapp``` folde
 ```sh
 conda create -n CarPricePredict python=3.7 # create environment under 'CarPricePredict' name
 conda activate CarPricePredict # activate environment
-cd webapp/ # change directory to App deploymnet setup folder
+cd webApp/ # change directory to App deploymnet setup folder
 pip3 install -r requirements.txt # install dependencies
 python3 application.py # launch application
 ```
